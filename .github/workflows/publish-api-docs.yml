@@ -1,4 +1,4 @@
-name: Validate and Publish OpenAPI Spec
+name: Publish API Docs
 
 on:
   workflow_call:
