@@ -2,9 +2,9 @@ name: Example - Validate and Publish OpenAPI
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+  #   branches:
+  #     - main
+  # workflow_dispatch:
 
 jobs:
   call-reusable-workflow:
