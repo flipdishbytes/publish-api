@@ -3,15 +3,15 @@ name: Example - Validate and Publish OpenAPI
 on:
   push:
     branches:
-      - release
+      - main
   workflow_dispatch:
 
 jobs:
   call-reusable-workflow:
-    uses: flipdish/publish-api-docs@main
+    uses: flipdishbytes/publish-api@main
     with:
-      openapi_file_path: 'src/ignis.api.services/resources/api/public/orgManagement/openapi.json'
+      openapi_file_path: 'example/openapi.json'
       readme_version: 'v3.0'
       skip_readme_publish: false
     secrets:
-      README_API_KEY: ${{ secrets.README_API_KEY }} 
+      README_API_KEY: ${{ secrets.README_API_KEY_TEST }} 
