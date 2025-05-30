@@ -1,0 +1,17 @@
+name: Example - Validate and Publish OpenAPI
+
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch:
+
+jobs:
+  call-reusable-workflow:
+    uses: ./.github/workflows/validate-publish-openapi.yml
+    with:
+      openapi_file_path: 'src/ignis.api.services/resources/api/public/orgManagement/openapi.json'
+      readme_version: 'v3.0'
+      skip_readme_publish: false
+    secrets:
+      README_API_KEY: ${{ secrets.README_API_KEY }} 

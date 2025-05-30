@@ -1,0 +1,64 @@
+name: Validate and Publish OpenAPI Spec
+
+on:
+  workflow_call:
+    inputs:
+      openapi_file_path:
+        description: 'Path to the OpenAPI specification file'
+        required: true
+        type: string
+      spectral_rules_url:
+        description: 'URL to the Spectral rules file'
+        required: false
+        type: string
+        default: 'https://raw.githubusercontent.com/flipdishbytes/spectral-rules/main/.spectral.yaml'
+      readme_version:
+        description: 'Version to use when uploading to ReadMe'
+        required: false
+        type: string
+        default: 'v3.0'
+      skip_readme_publish:
+        description: 'Skip publishing to ReadMe (useful for validation-only runs)'
+        required: false
+        type: boolean
+        default: false
+      runs_on:
+        description: 'Runner to use for the job'
+        required: false
+        type: string
+        default: 'ubuntu-latest'
+    secrets:
+      README_API_KEY:
+        description: 'API key for ReadMe'
+        required: false
+
+jobs:
+  validate-and-publish:
+    runs-on: ${{ inputs.runs_on }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Spectral rules
+        run: |
+          curl -o .spectral.yaml ${{ inputs.spectral_rules_url }}
+
+      - name: Show Spectral ruleset
+        run: cat .spectral.yaml
+
+      - name: Lint OpenAPI with Spectral
+        uses: stoplightio/spectral-action@v0.8.11
+        with:
+          file_glob: ${{ inputs.openapi_file_path }}
+          spectral_ruleset: '.spectral.yaml'
+
+      - name: Validate OpenAPI spec with ReadMe
+        uses: readmeio/rdme@v10
+        with:
+          rdme: openapi validate ${{ inputs.openapi_file_path }}
+
+      - name: Publish to ReadMe
+        if: ${{ !inputs.skip_readme_publish }}
+        uses: readmeio/rdme@v10
+        with:
+          rdme: openapi upload ${{ inputs.openapi_file_path }} --version=${{ inputs.readme_version }} --key=${{ secrets.README_API_KEY }} 
