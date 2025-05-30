@@ -13,6 +13,9 @@ inputs:
     description: 'Version to use when uploading to ReadMe'
     required: false
     default: 'v3.0'
+  readme_slug:
+    description: 'Slug to use for the API definition in ReadMe, see https://docs.readme.com/main/docs/rdme#specifying-page-slugs'
+    required: true
   skip_readme_publish:
     description: 'Skip publishing to ReadMe (useful for validation-only runs)'
     required: false
@@ -44,8 +47,11 @@ runs:
       with:
         rdme: openapi validate ${{ inputs.openapi_file_path }}
 
+    # readmecli docs: https://github.com/readmeio/rdme/blob/next/documentation/commands/openapi.md#rdme-openapi-upload-spec
+    # slug docs: https://docs.readme.com/main/docs/rdme#specifying-page-slugs
+    # GHAs examples: https://docs.readme.com/main/docs/rdme#github-actions-examples
     - name: Publish to ReadMe
       if: ${{ inputs.skip_readme_publish != 'true' }}
       uses: readmeio/rdme@v10
       with:
-        rdme: openapi upload ${{ inputs.openapi_file_path }} --version=${{ inputs.readme_version }} --key=${{ inputs.readme_api_key }} 
+        rdme: openapi upload ${{ inputs.openapi_file_path }} --version=${{ inputs.readme_version }} --key=${{ inputs.readme_api_key }} --slug=${{ inputs.readme_slug }} 

@@ -12,6 +12,7 @@ jobs:
     with:
       openapi_file_path: 'example/openapi.json'
       readme_version: 'v3.0'
+      readme_slug: 'test-api'
       skip_readme_publish: false
     secrets:
       README_API_KEY: ${{ secrets.README_API_KEY_TEST }} 
