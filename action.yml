@@ -8,6 +8,9 @@ inputs:
   readme_slug:
     description: 'Slug to use for the API definition in ReadMe, see https://docs.readme.com/main/docs/rdme#specifying-page-slugs'
     required: true
+  readme_api_key:
+    description: 'API key for ReadMe (pass secrets.README_API_KEY from your workflow)'
+    required: true
   spectral_rules_url:
     description: 'URL to the Spectral rules file'
     required: false
@@ -20,9 +23,6 @@ inputs:
     description: 'Skip publishing to ReadMe (useful for validation-only runs)'
     required: false
     default: 'false'
-  readme_api_key:
-    description: 'API key for ReadMe'
-    required: false
 
 runs:
   using: composite
@@ -45,7 +45,7 @@ runs:
     - name: Validate OpenAPI spec with ReadMe
       uses: readmeio/rdme@v10
       with:
-        rdme: openapi validate ${{ inputs.openapi_file_path }} --slug=${{ inputs.readme_slug }} --key=${{ inputs.readme_api_key || secrets.README_API_KEY }}
+        rdme: openapi validate ${{ inputs.openapi_file_path }} --slug=${{ inputs.readme_slug }} --key=${{ inputs.readme_api_key }}
 
     # readmecli docs: https://github.com/readmeio/rdme/blob/next/documentation/commands/openapi.md#rdme-openapi-upload-spec
     # slug docs: https://docs.readme.com/main/docs/rdme#specifying-page-slugs
@@ -54,4 +54,4 @@ runs:
       if: ${{ inputs.skip_readme_publish != 'true' }}
       uses: readmeio/rdme@v10
       with:
-        rdme: openapi upload ${{ inputs.openapi_file_path }} --version=${{ inputs.readme_version }} --key=${{ inputs.readme_api_key || secrets.README_API_KEY }} --slug=${{ inputs.readme_slug }} 
+        rdme: openapi upload ${{ inputs.openapi_file_path }} --version=${{ inputs.readme_version }} --key=${{ inputs.readme_api_key }} --slug=${{ inputs.readme_slug }} 

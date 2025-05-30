@@ -8,11 +8,17 @@ on:
 
 jobs:
   call-reusable-workflow:
-    uses: flipdishbytes/publish-api@main
-    with:
-      openapi_file_path: 'example/openapi.json'
-      readme_version: 'v3.0'
-      readme_slug: 'test-api'
-      skip_readme_publish: false
-    secrets:
-      README_API_KEY: ${{ secrets.README_API_KEY_TEST }} 
+    # needs: tag-pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate and Publish OpenAPI
+        uses: ./  # Use local action
+        with:
+          openapi_file_path: 'example/openapi.json'
+          readme_slug: 'test-api'  # Required: slug for the API definition
+          readme_api_key: ${{ secrets.README_API_KEY }}  # Required: ReadMe API key
+          # Optional parameters:
+          readme_version: 'v3.0'
+          skip_readme_publish: false 
