@@ -45,7 +45,7 @@ runs:
     - name: Validate OpenAPI spec with ReadMe
       uses: readmeio/rdme@v10
       with:
-        rdme: openapi validate ${{ inputs.openapi_file_path }} --slug=${{ inputs.readme_slug }} --key=${{ inputs.readme_api_key }}
+        rdme: openapi validate ${{ inputs.openapi_file_path }}--key=${{ inputs.readme_api_key }}
 
     # readmecli docs: https://github.com/readmeio/rdme/blob/next/documentation/commands/openapi.md#rdme-openapi-upload-spec
     # slug docs: https://docs.readme.com/main/docs/rdme#specifying-page-slugs
