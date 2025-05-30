@@ -8,7 +8,7 @@ on:
 
 jobs:
   call-reusable-workflow:
-    uses: ./.github/workflows/validate-publish-openapi.yml
+    uses: flipdish/publish-api-docs@main
     with:
       openapi_file_path: 'src/ignis.api.services/resources/api/public/orgManagement/openapi.json'
       readme_version: 'v3.0'
