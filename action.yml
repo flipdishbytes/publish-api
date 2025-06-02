@@ -35,12 +35,19 @@ runs:
     - name: Show Spectral ruleset
       shell: bash
       run: cat .spectral.yaml
-
-    - name: Lint OpenAPI with Spectral
-      uses: stoplightio/spectral-action@v0.8.11
+    
+    - name: Node.js setup
+      uses: actions/setup-node@v4
       with:
-        file_glob: ${{ inputs.openapi_file_path }}
-        spectral_ruleset: '.spectral.yaml'
+        node-version: 22
+    
+    - name: Install Spectral
+      shell: bash
+      run: npm install -g @stoplight/spectral-cli
+    
+    - name: Lint OpenAPI with Spectral
+      shell: bash
+      run: spectral lint ${{ inputs.openapi_file_path }} --ruleset .spectral.yaml --verbose
 
     - name: Validate OpenAPI spec with ReadMe
       uses: readmeio/rdme@v10
