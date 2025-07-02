@@ -29,10 +29,10 @@ jobs:
     uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
     with:
       openapi_file_path: 'path/to/your/openapi.json'
+      readme_slug: 'your-api-slug'
+      readme_api_key: ${{ secrets.README_API_KEY }}
       readme_version: 'v3.0'
       skip_readme_publish: false
-    secrets:
-      README_API_KEY: ${{ secrets.README_API_KEY }}
 ```
 
 ### From This Repository
@@ -44,10 +44,13 @@ See `.github/workflows/example-usage.yml` for a working example.
 | Input | Description | Required | Default |
 |-------|-------------|----------|---------|
 | `openapi_file_path` | Path to the OpenAPI specification file | ✅ | - |
+| `readme_slug` | Slug to use for the API definition in ReadMe | ✅ | - |
+| `readme_api_key` | API key for ReadMe | ✅ | - |
 | `spectral_rules_url` | URL to the Spectral rules file | ❌ | `https://raw.githubusercontent.com/flipdishbytes/spectral-rules/main/.spectral.yaml` |
 | `readme_version` | Version to use when uploading to ReadMe | ❌ | `v3.0` |
-| `skip_readme_publish` | Skip publishing to ReadMe (validation only) | ❌ | `false` |
-| `runs_on` | Runner to use for the job | ❌ | `ubuntu-latest` |
+| `skip_readme_publish` | Skip publishing to ReadMe (useful for validation-only runs) | ❌ | `false` |
+| `skip_spectral` | Skip Spectral linting (useful for validation-only runs) | ❌ | `false` |
+| `skip_validate_readme` | Skip ReadMe OpenAPI validation (useful for linting-only runs) | ❌ | `false` |
 
 ## Secrets
 
@@ -57,11 +60,13 @@ See `.github/workflows/example-usage.yml` for a working example.
 
 ## Workflow Steps
 
-1. **Checkout**: Checks out the repository code
-2. **Download Spectral Rules**: Downloads the specified Spectral ruleset
-3. **Lint with Spectral**: Validates the OpenAPI spec against the rules
-4. **Validate with ReadMe**: Uses ReadMe's validation tool
-5. **Publish to ReadMe**: Uploads the spec to ReadMe (if enabled)
+1. **Download Spectral Rules**: Downloads the specified Spectral ruleset (skipped if `skip_spectral` is true)
+2. **Show Spectral Ruleset**: Displays the downloaded rules for verification (skipped if `skip_spectral` is true)
+3. **Node.js Setup**: Sets up Node.js environment for Spectral CLI
+4. **Install Spectral**: Installs the Spectral CLI tool (skipped if `skip_spectral` is true)
+5. **Lint with Spectral**: Validates the OpenAPI spec against the rules (skipped if `skip_spectral` is true)
+6. **Validate with ReadMe**: Uses ReadMe's validation tool (skipped if `skip_validate_readme` is true)
+7. **Publish to ReadMe**: Uploads the spec to ReadMe (skipped if `skip_readme_publish` is true)
 
 ## Examples
 
@@ -70,8 +75,8 @@ See `.github/workflows/example-usage.yml` for a working example.
 uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
 with:
   openapi_file_path: 'api/openapi.json'
-secrets:
-  README_API_KEY: ${{ secrets.README_API_KEY }}
+  readme_slug: 'my-api'
+  readme_api_key: ${{ secrets.README_API_KEY }}
 ```
 
 ### Validation Only (No Publishing)
@@ -79,6 +84,30 @@ secrets:
 uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
 with:
   openapi_file_path: 'api/openapi.json'
+  readme_slug: 'my-api'
+  readme_api_key: ${{ secrets.README_API_KEY }}
+  skip_readme_publish: true
+```
+
+### Spectral Linting Only (Skip ReadMe Validation and Publishing)
+```yaml
+uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
+with:
+  openapi_file_path: 'api/openapi.json'
+  readme_slug: 'my-api'
+  readme_api_key: ${{ secrets.README_API_KEY }}
+  skip_validate_readme: true
+  skip_readme_publish: true
+```
+
+### ReadMe Validation Only (Skip Spectral Linting and Publishing)
+```yaml
+uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
+with:
+  openapi_file_path: 'api/openapi.json'
+  readme_slug: 'my-api'
+  readme_api_key: ${{ secrets.README_API_KEY }}
+  skip_spectral: true
   skip_readme_publish: true
 ```
 
@@ -87,10 +116,10 @@ with:
 uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
 with:
   openapi_file_path: 'api/openapi.json'
+  readme_slug: 'my-api'
+  readme_api_key: ${{ secrets.README_API_KEY }}
   spectral_rules_url: 'https://example.com/custom-rules.yaml'
   readme_version: 'v2.0'
-secrets:
-  README_API_KEY: ${{ secrets.README_API_KEY }}
 ```
 
 ### Multiple OpenAPI Files
@@ -100,14 +129,16 @@ jobs:
     uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
     with:
       openapi_file_path: 'api/public/openapi.json'
+      readme_slug: 'public-api'
+      readme_api_key: ${{ secrets.README_API_KEY }}
       readme_version: 'v3.0-public'
-    secrets:
-      README_API_KEY: ${{ secrets.README_API_KEY }}
   
   validate-internal-api:
     uses: flipdishbytes/publish-api/.github/workflows/validate-publish-openapi.yml@main
     with:
       openapi_file_path: 'api/internal/openapi.json'
+      readme_slug: 'internal-api'
+      readme_api_key: ${{ secrets.README_API_KEY }}
       skip_readme_publish: true  # Don't publish internal APIs
 ```
 
